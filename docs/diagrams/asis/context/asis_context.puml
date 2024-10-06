@@ -1,0 +1,16 @@
+@startuml
+!include ../../c4/C4_Context.puml
+LAYOUT_LEFT_RIGHT()
+
+title System Context diagram системы мониторинга температуры
+
+Person(user, "Пользователь", "Мониторит температуру")
+System_Ext(sensor, "Датчики температуры", "Предоставляет данные о температуре")
+System(monolith, "Монолитное приложение", "Мониторит температуру и взаимодействует с пользователем")
+
+Rel(user, monolith, "Просмотр данных о температуре")
+Rel(monolith, sensor, "Получение данных о температуре")
+
+'SHOW_LEGEND()
+
+@enduml

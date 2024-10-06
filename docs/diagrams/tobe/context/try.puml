@@ -1,0 +1,58 @@
+@startuml
+!include ../../c4/C4_Container.puml
+!include ../../c4/C4_Context.puml
+
+title C4 Container Diagram
+
+'System(Internet) {
+'    Container(MobileApp, "Мобильное приложение")
+'    Container(WebApp, "Веб-приложение")
+'}
+
+System_Boundary(APIGateway, "API Gateway", "Контейнер", "Маршрутизация и безопасность API") {
+    MobileApp --> APIGateway : REST API
+    WebApp --> APIGateway : REST API
+}
+
+System_Boundary(Microservices, "Микросервисы") {
+    Container(DeviceManagementService, "Device Management", "Микросервис", "Управление устройствами") {
+        APIGateway --> DeviceManagementService : REST API
+    }
+
+    Container(AutomationService, "Automation Service", "Микросервис", "Автоматизация сценариев") {
+        APIGateway --> AutomationService : REST API
+        AutomationService --> DeviceManagementService : Запрос состояния устройств (REST API)
+    }
+
+    Container(TelemetryService, "Telemetry Service", "Микросервис", "Сбор и хранение телеметрии") {
+        APIGateway --> TelemetryService : REST API
+        DeviceManagementService --> TelemetryService : Передача данных о состоянии устройства
+    }
+
+    Container(MonitoringService, "Monitoring Service", "Микросервис", "Мониторинг состояния оборудования") {
+        TelemetryService --> MonitoringService : События (Kafka)
+    }
+
+    Container(SubscriptionBillingService, "Subscription and Billing Service", "Микросервис", "Подписки и биллинг") {
+        APIGateway --> SubscriptionBillingService : REST API
+    }
+}
+
+Rel(Kafka, "Kafka", "Шина данных") {
+    TelemetryService --> Kafka : Публикация событий о состоянии устройств
+    MonitoringService --> Kafka : Получение событий о сбоях
+}
+
+'DB(DeviceDB, "Device Management DB", "PostgreSQL") {
+'    DeviceManagementService --> DeviceDB : Сохранение данных устройств
+'}
+
+'DB(TelemetryDB, "Telemetry DB", "NoSQL") {
+'    TelemetryService --> TelemetryDB : Хранение телеметрических данных
+'}
+
+'DB(SubscriptionDB, "Subscription and Billing DB", "PostgreSQL") {
+'    SubscriptionBillingService --> SubscriptionDB : Управление подписками
+'}
+
+@enduml
