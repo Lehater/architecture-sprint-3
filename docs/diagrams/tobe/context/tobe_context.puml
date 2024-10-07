@@ -1,17 +1,18 @@
 @startuml
-!include ../../c4/C4_Container.puml
+!include ../../_c4/C4_Container.puml
 
 LAYOUT_LEFT_RIGHT()
 
 title Диаграмма Контекста системы мониторинга температуры
 
-Person(user, "Пользователь", "Мониторит температуру","11111","11111","22222","")
+Person(user, "Пользователь", "Мониторит температуру")
 System_Ext(sensor, "Датчики температуры", "Предоставляет данные о температуре")
 'Boundary($alias, $label, "", $allTags, $link, $descr)
 
 System_Boundary(monolith, "Монолитное приложение") {
-    Container(client, "", "Мониторит температуру и взаимодействует с пользователем")
-    Container(client, "", "Мониторит температуру и взаимодействует с пользователем")
+    Container(client_mobile, "", "взаимодействует с пользователем")
+    Container(client_website, "", "взаимодействует с пользователем")
+    Container(client_website, "", "взаимодействует с пользователем")
 }
 
 Rel(user, monolith, "Просмотр данных о температуре")

@@ -1,6 +1,6 @@
 @startuml
-!include ../../c4/C4_Container.puml
-!include ../../c4/C4_Context.puml
+!include ../../_c4/C4_Context.puml
+!include ../../_c4/C4_Container.puml
 
 title C4 Container Diagram
 

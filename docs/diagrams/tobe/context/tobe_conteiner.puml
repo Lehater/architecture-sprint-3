@@ -1,0 +1,45 @@
+@startuml
+!include ../../_c4/C4_Container.puml
+
+title Диаграмма Контейнеров системы умного дома
+
+Person(user, "Пользователь", "Управляет умным домом через веб интерфейс")
+System_Ext(sensor, "Оборудование Умного Дома", "Опрашивается монолитом для получения данных телеметрии")
+
+Enterprise_Boundary(smart-house_company,"Smart House Company") {
+    Boundary(smart-house_service,"Smart-House Service") {
+        System(monolith, "Монолитное приложение", "Осуществляет опрос сенсоров, отправляет данные телеметрии в Kafka")
+        Container(api_gateway, "API Gateway", "Единая точка входа для всех запросов")
+        Container(device_service, "Device Management", "Управление устройствами: регистрация, команды, статус")
+        Container(telemetry_service, "Telemetry Service", "Прием данных телеметрии через Kafka, хранение, предоставление API")
+        Container(automation_service, "Automation Service", "Создание и выполнение сценариев автоматизации")
+        Container(heating_service, "Heating Service", "Управление системой отопления")
+        Container(lighting_service, "Lighting Service", "Управление освещением")
+        Container(cctv_service, "CCTV Service", "Управление видеонаблюдением")
+        System(message_queue, "Kafka", "Шина данных для обмена сообщениями")
+    }
+    Container(client_website, "Smart House Web Site", "Пользовательский интерфейс для управления умным домом")
+}
+
+Rel(user, client_website, "Управляет устройствами, просмотр телеметрии")
+Rel(client_website, api_gateway, "Отправка запросов на управление устройствами")
+
+' Маршрутизация запросов через API Gateway
+Rel(api_gateway, monolith, "Обработка старых функций, управление через монолит")
+Rel(api_gateway, device_service, "Регистрация, команды и управление устройствами")
+Rel(api_gateway, telemetry_service, "Запрос данных телеметрии")
+Rel(api_gateway, automation_service, "Создание и управление сценариями")
+Rel(api_gateway, heating_service, "Управление системой отопления")
+Rel(api_gateway, lighting_service, "Управление освещением")
+Rel(api_gateway, cctv_service, "Управление видеонаблюдением")
+
+' Взаимодействие с шиной сообщений Kafka для асинхронного обмена данными
+Rel(monolith, message_queue, "Публикация данных телеметрии в Kafka (топик sensor_data)")
+Rel(telemetry_service, message_queue, "Подписка на топик sensor_data, получение телеметрии из Kafka")
+Rel(device_service, message_queue, "Подписка на топик device_commands, публикация статусов устройств")
+Rel(heating_service, message_queue, "Подписка на данные управления отоплением")
+
+' Опрос устройств через монолит
+Rel(monolith, sensor, "Регулярный опрос устройств для получения данных телеметрии")
+
+@enduml
