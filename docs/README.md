@@ -209,7 +209,11 @@
 > При необходимости созданы C4 диаграммы на уровне кода (Code) для самых критичных частей системы.
 > Все диаграммы созданы с использованием PlantUML и соответствуют стандартам C4.
 
-![System Context diagram](diagrams/tobe/tobe_component.png)
+Диаграмма C4 уровня Контейнеров
+![System Container diagram](diagrams/tobe/tobe_container.png)
+
+Диаграмма C4 уровня Компонентов 
+![System Component diagram](diagrams/tobe/tobe_component.png)
 
 Перед отправкой проверьте, что
 

@@ -1,7 +1,7 @@
 @startuml
 !include ../_c4/C4_Component.puml
 
-title Диаграмма Контейнеров системы умного дома
+title Диаграмма Компонентов системы умного дома
 
 !unquoted procedure Rel_Write($from, $to, $label, $techn="", $descr="", $sprite="", $tags="", $link="")
 $getRel("--[#green]>>", $from, $to, $label, $techn, $descr, $sprite, $tags, $link)
