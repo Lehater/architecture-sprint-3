@@ -1,8 +1,6 @@
 @startuml
 !include ../_c4/C4_Component.puml
 
-title Диаграмма Контейнеров системы умного дома
-
 !unquoted procedure Rel_Write($from, $to, $label, $techn="", $descr="", $sprite="", $tags="", $link="")
 $getRel("--[#green]>>", $from, $to, $label, $techn, $descr, $sprite, $tags, $link)
 !endprocedure
@@ -10,6 +8,8 @@ $getRel("--[#green]>>", $from, $to, $label, $techn, $descr, $sprite, $tags, $lin
 !unquoted procedure Rel_Read($from, $to, $label, $techn="", $descr="", $sprite="", $tags="", $link="")
 $getRel("<<--[#blue]", $from, $to, $label, $techn, $descr, $sprite, $tags, $link)
 !endprocedure
+
+title Диаграмма контейнеров системы Умного Дома
 
 Person(user, "Пользователь", "Управляет умным домом через веб интерфейс")
 System_Ext(sensor, "Оборудование Умного Дома", "Отправляет данные телеметрии и принимает команды")
@@ -31,25 +31,25 @@ Rel(user_interaction, api_gateway, "Отправка запросов на уп�
 
 ' Маршрутизация запросов через API Gateway
 Rel(api_gateway, device_service, "Регистрация, команды и управление устройствами")
-Rel(api_gateway, telemetry_service, "Запрос данных телеметрии")
+Rel(api_gateway, telemetry_service, "Запрос телеметрии")
 Rel(api_gateway, automation_service, "Создание и управление сценариями")
 
 ' Взаимодействие с шиной сообщений Kafka для асинхронного обмена данными
-Rel_Write(device_service, message_queue, "Публикация команд")
+Rel_Write(device_service, message_queue, "Команды")
 Rel_Read(device_service, message_queue, "Результаты команд")
-Rel_Write(device_service, message_queue, "Публикация телеметрии")
-Rel_Write(devices_connector, message_queue, "Публикация телеметрии")
-Rel_Write(automation_service, message_queue, "Публикация команд")
 
-Rel_Read(devices_connector, message_queue, "Команды на устройства")
-Rel_Write(devices_connector, message_queue, "Результаты команд")
-Rel(devices_connector, sensor, "Команды на устройства через различные протоколы")
-
-Rel_Read(telemetry_service, message_queue, "Получение телеметрии")
+Rel_Write(automation_service, message_queue, "Команды")
 Rel_Read(automation_service, message_queue, "Результаты команд")
 Rel_Read(automation_service, message_queue, "Телеметрия")
 
-'
+Rel_Write(devices_connector, message_queue, "Телеметрия")
+Rel_Write(devices_connector, message_queue, "Результаты команд")
+Rel_Read(devices_connector, message_queue, "Команды")
+
+Rel_Read(telemetry_service, message_queue, "Телеметрия")
+
+' Взаимодействие оборудованием "умного" дома
+Rel(devices_connector, sensor, "Команды на устройства через различные протоколы")
 Rel(sensor, devices_connector, "Приём телеметрии через протоколы (например, MQTT, HTTP)")
 
 @enduml

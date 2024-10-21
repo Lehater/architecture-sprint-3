@@ -64,20 +64,20 @@ Rel(api_gateway, telemetry_api, "Запрос данных телеметрии"
 Rel(api_gateway, automation_service, "Создание и управление сценариями")
 
 ' Взаимодействие с шиной сообщений Kafka для асинхронного обмена данными
-Rel_Write(dm_service, kafka_device_command, "Публикация команд")
+Rel_Write(dm_service, kafka_device_command, "Команды")
 Rel_Read(dm_service, kafka_device_response, "Результаты команд")
-Rel_Write(dm_service, kafka_telemetry_data, "Публикация телеметрии")
-Rel_Write(device_telemetry_collector, kafka_telemetry_data, "Публикация телеметрии")
-Rel_Write(automation_service, kafka_device_command, "Публикация команд")
 
-Rel_Read(device_command_executor, kafka_device_command, "Команды на устройства")
-Rel_Write(device_command_executor, kafka_device_response, "Результаты команд")
-Rel(device_command_executor, sensor, "Команды на устройства через различные протоколы")
-
-Rel_Read(telemetry_consumer, kafka_telemetry_data, "Получение телеметрии")
+Rel_Write(automation_service, kafka_device_command, "Команды")
 Rel_Read(automation_service, kafka_device_response, "Результаты команд")
 Rel_Read(automation_service, kafka_telemetry_data, "Телеметрия")
 
+Rel_Write(device_telemetry_collector, kafka_telemetry_data, "Телеметрия")
+Rel_Write(device_command_executor, kafka_device_response, "Результаты команд")
+Rel_Read(device_command_executor, kafka_device_command, "Команды")
+
+Rel_Read(telemetry_consumer, kafka_telemetry_data, "Телеметрия")
+
 Rel(sensor, device_telemetry_collector, "Приём телеметрии через протоколы (например, MQTT, HTTP)")
+Rel(device_command_executor, sensor, "Команды на устройства через различные протоколы")
 
 @enduml
