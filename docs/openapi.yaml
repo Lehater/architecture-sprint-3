@@ -1,0 +1,206 @@
+openapi: 3.0.0
+info:
+  title: Device Management and Telemetry API
+  version: 1.0.0
+  description: API для управления устройствами и мониторинга телеметрии.
+
+paths:
+  /devices/{device_id}:
+    get:
+      summary: "Получение информации об устройстве"
+      description: "Возвращает подробную информацию о конкретном устройстве по его ID."
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Детальная информация об устройстве"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: "Устройство не найдено"
+        '500':
+          description: "Ошибка сервера"
+
+  /devices/{device_id}/status:
+    put:
+      summary: "Обновление состояния устройства"
+      description: "Позволяет изменить состояние устройства (например, включить/выключить)."
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceState'
+      responses:
+        '200':
+          description: "Состояние устройства обновлено"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceState'
+        '400':
+          description: "Неверный запрос"
+        '404':
+          description: "Устройство не найдено"
+        '500':
+          description: "Ошибка сервера"
+
+  /devices/{device_id}/commands:
+    post:
+      summary: "Отправка команды устройству"
+      description: "Отправляет команду устройству (например, «установить температуру 22 градуса»)."
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCommand'
+      responses:
+        '200':
+          description: "Команда успешно отправлена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceCommandResponse'
+        '400':
+          description: "Неверный запрос"
+        '404':
+          description: "Устройство не найдено"
+        '500':
+          description: "Ошибка сервера"
+
+  /devices/{device_id}/telemetry/latest:
+    get:
+      summary: "Получение последних данных телеметрии"
+      description: "Возвращает последнее полученное значение телеметрии для устройства."
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Последнее значение телеметрии устройства"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telemetry'
+        '404':
+          description: "Устройство не найдено"
+        '500':
+          description: "Ошибка сервера"
+
+  /devices/{device_id}/telemetry:
+    get:
+      summary: "Получение исторических данных телеметрии"
+      description: "Возвращает исторические данные телеметрии для устройства за определённый период времени."
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: "Исторические данные телеметрии"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telemetry'
+        '400':
+          description: "Неверные параметры запроса"
+        '404':
+          description: "Данные телеметрии не найдены"
+        '500':
+          description: "Ошибка сервера"
+
+components:
+  schemas:
+    Device:
+      type: object
+      properties:
+        device_id:
+          type: string
+        device_type:
+          type: string
+        model:
+          type: string
+        status:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+
+    DeviceState:
+      type: object
+      properties:
+        state:
+          type: string
+          enum: [on, off]
+
+    DeviceCommand:
+      type: object
+      properties:
+        command:
+          type: string
+        value:
+          type: number
+
+    DeviceCommandResponse:
+      type: object
+      properties:
+        device_id:
+          type: string
+        command:
+          type: string
+        value:
+          type: number
+        status:
+          type: string
+
+    Telemetry:
+      type: object
+      properties:
+        device_id:
+          type: string
+        data_type:
+          type: string
+        value:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
